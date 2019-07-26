@@ -42,7 +42,7 @@ const jwtOptions = {
 //done runs once authentication runs (like next)
 const jwtLogin = new JwtStrategy(jwtOptions, async (payload, done) => {
   try {
-    const user = await User.findbyId(payload.sub)
+    const user = await User.findById(payload.sub)
     if (user) {
       done(null, user)
     } else {
