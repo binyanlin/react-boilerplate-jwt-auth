@@ -14,15 +14,15 @@ const localLogin = new LocalStrategy(localOptions, async (email, password, done)
   try {
     const user = await User.findOne({ email })
     if(!user) {
-      return done(null, false);
+      done(null, false);
     }
     user.comparePassword(password, (err, isMatch) => {
       if (err) return done(err);
       if (!isMatch) return done(null, false);
-      return done(null, user);
+      done(null, user);
     })
   } catch (e) {
-    return done(e, false);
+    done(e, false);
   }
 });
 
@@ -37,4 +37,25 @@ const jwtOptions = {
   secretOrKey: config.secret
 }
 
+
+//Payload argument from incoming request fn in authRoutes
+//done runs once authentication runs (like next)
+const jwtLogin = new JwtStrategy(jwtOptions, async (payload, done) => {
+  try {
+    const user = await User.findbyId(payload.sub)
+    if (user) {
+      done(null, user)
+    } else {
+      done(null, false)
+    }
+  } catch (e) {
+    done(e, false)
+  }
+})
+
+//passport.use tells passport that we declared these strats
+//local login says we have strat called "Local", jwt login tells we have strat called jwt
+
+//ex: passport.authenticate('jwt') passport looks for jwt
 passport.use(localLogin);
+passport.use(jwtLogin);
