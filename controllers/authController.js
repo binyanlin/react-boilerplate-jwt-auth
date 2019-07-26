@@ -1,6 +1,7 @@
 const db = require("./../models");
 
 module.exports = {
+
   signUp: async (req, res) => {
     const { email, password } = req.body;
     if (!email || !password) {
@@ -20,6 +21,9 @@ module.exports = {
     } catch (e) {
       res.status(404).json({e});
     }
+  },
 
+  signIn: (req, res) => {
+    res.send("signIn route authController hit");
   }
 };
