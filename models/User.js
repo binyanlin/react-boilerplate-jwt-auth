@@ -35,7 +35,20 @@ UserSchema.pre("save", async function(next) {
   } catch(e) {
     return next(e);
   }
-})
+});
+
+UserSchema.methods.comparePassword = async function(candidatePassword, callback) {
+  const user = this;
+  try {
+    const isMatch = await bcrypt.compare(candidatePassword, user.password);
+    callback(null, isMatch);
+  } catch (e) {
+    callback(e);
+  }
+}
+
+//UserSchema.statics.comparePassword() will belong to all users, but we want to give to instance of model
+//which is why we use UserSchema.methods
 
 const User = mongoose.model("User", UserSchema)
 
