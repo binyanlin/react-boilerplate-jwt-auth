@@ -1,11 +1,12 @@
 const router = require("express").Router();
-
+const passportService = require("./../../services/passport.js")
 const authController = require("./../../controllers/authController")
+const authMiddleware = require("./../../middlewares/authMiddlewares.js");
 
 router.route("/signup")
   .post(authController.signUp)
 
 router.route("/signin")
-  .post(authController.signIn)
-  
+  .post(authMiddleware.requireSignIn, authController.signIn)
+
 module.exports = router;

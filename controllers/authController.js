@@ -33,6 +33,6 @@ module.exports = {
   },
 
   signIn: (req, res) => {
-    res.send("signIn route authController hit");
+    res.send({token: tokenForUser(req.user)});
   }
 };
