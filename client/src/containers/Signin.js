@@ -2,19 +2,14 @@ import React, { Component } from "react";
 import { reduxForm, Field } from "redux-form";
 import { compose } from "redux";
 import { connect } from "react-redux";
-import { signup } from "../actions";
-import validator from "validator";
+import { signin } from "../actions";
 
-class Signup extends Component {
+class Signin extends Component {
 
-  renderError = ({error, touched}) => {
-    if(touched && error) {
-      return (
-        <div>
-          <div>{error}</div>
-        </div>
-      )
-    }
+  onSubmit = formValues => {
+    this.props.signin(formValues, () => {
+      this.props.history.push("/counter")
+    })
   }
 
   renderInput = ({input, label, meta}) => {
@@ -28,16 +23,7 @@ class Signup extends Component {
     )
   }
 
-  onSubmit = (formProps) => {
-    // {email, password}
-    console.log(formProps);
-    this.props.signup(formProps, () => {
-      this.props.history.push('/counter'); //props.history comes from react-router, .push pushes router to whatever is passed in
-    });
-  }
-  
   render() {
-    console.log(this.props);
     const { handleSubmit } = this.props; //pulls out handleSubmit from redux-form
     return (
       <form onSubmit={handleSubmit(this.onSubmit)}>
@@ -61,7 +47,8 @@ class Signup extends Component {
             autoComplete= ""
           />
         </fieldset>
-        <button>Signup</button>
+        <button>Signin</button>
+        <div>{this.props.errorMessage}</div>
       </form>
     )
   }
@@ -71,28 +58,7 @@ function mapStateToProps(state) {
   return { errorMessage: state.auth.errorMessage };
 };
 
-const validate = formValues => { //reduxform will display errors
-  const errors = {};
-  // console.log("validator", formValues);
-
-  if (!formValues.email) {
-    errors.email = "You must enter an email";
-  } 
-
-  if (formValues.email) {
-    if (!validator.isEmail(formValues.email)) {
-      errors.email = "You must enter a valid email address";
-  }
-
-  } if (!formValues.password) {
-    errors.password = "You must enter a password"
-  }
-  return errors;
-}
-
 export default compose(
-  connect(mapStateToProps, { signup }),
-  reduxForm({
-    form: "signup",
-    validate})
-)(Signup);
+  connect(mapStateToProps, {signin}),
+  reduxForm({form: "signin"})
+)(Signin)
